@@ -16,6 +16,7 @@
 #include "openMVG/cameras/Camera_Pinhole_Brown.hpp"
 #include "openMVG/cameras/Camera_Pinhole_Fisheye.hpp"
 #include "openMVG/cameras/Camera_Spherical.hpp"
+#include "openMVG/cameras/Camera_Spherical_Equirectangular.hpp"
 #include "openMVG/cameras/Camera_undistort_image.hpp"
 
 namespace openMVG
