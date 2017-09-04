@@ -842,17 +842,35 @@ struct ResidualErrorFunctor_Intrinsic_Spherical_Equirectangular
       pos_proj[2] += cam_t[2];
       
       // Transform the coord in is Image space
-      const T lon = ceres::atan2(pos_proj[0] , pos_proj[2]); // Horizontal normalization of the  X-Z component
+      /*const T lon = ceres::atan2(pos_proj[0] , pos_proj[2]); // Horizontal normalization of the  X-Z component
       const T lat = ceres::atan2(-pos_proj[1], ceres::sqrt(pos_proj[0] * pos_proj[0]  + pos_proj[2] * pos_proj[2])); // Tilt angle
-      const T coord[] = {lon / (2 * M_PI), lat / (2 * M_PI)}; // normalization
-      
+      */
+      T d = ceres::sqrt(  pos_proj[0]*pos_proj[0] + pos_proj[1]*pos_proj[1] + pos_proj[2]*pos_proj[2]);
+
+      //Hmm; do we need to perform a normalization of x and y values before passing into atan2??
+      T zd = pos_proj[2] / d;
+
+      T h = ceres::atan2(pos_proj[0],pos_proj[1]);
+      T v = ceres::acos(zd);
+
+      /*const T coord[] = {lon / (2 * M_PI), lat / (2 * M_PI)}; // normalization
+
       const T size ( std::max(m_imageSize[0], m_imageSize[1]) );
       const T projected_x = coord[0] * size - 0.5 + m_imageSize[0] / 2.0;
       const T projected_y = coord[1] * size - 0.5 + m_imageSize[1] / 2.0;
-      
+       */
+
+      //Calculate projected in pixels location of the point in camera space
+      const size_t size = std::max(m_imageSize[0], m_imageSize[1]);
+      const double pixelSize = (M_PI * 2.0) / static_cast<double>(size);
+
+      T projected_x = (h + M_PI) / pixelSize;
+      T projected_y = v / pixelSize;
+
+      //Determine residual as the signed difference between newly projected point and old result.
       out_residuals[0] = projected_x - m_pos_2dpoint[0];
       out_residuals[1] = projected_y - m_pos_2dpoint[1];
-      
+
       return true;
     }
     
