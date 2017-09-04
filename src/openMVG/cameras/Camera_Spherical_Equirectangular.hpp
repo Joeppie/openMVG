@@ -1,10 +1,10 @@
-#ifndef MMPOS_CAMERAS_CAMERA_EQUIRECTANGULAR_HPP
-#define MMPOS_CAMERAS_CAMERA_EQUIRECTANGULAR_HPP
+#ifndef OPENMVG_CAMERAS_CAMERA_SPHERICAL_EQUIRECTANGULAR_HPP
+#define OPENMVG_CAMERAS_CAMERA_SPHERICAL_EQUIRECTANGULAR_HPP
 
 #include "openMVG/numeric/numeric.h"
 #include "openMVG/cameras/Camera_Intrinsics.hpp"
 
-namespace mmpos
+namespace openMVG
 {
     namespace cameras
     {
@@ -12,10 +12,10 @@ namespace mmpos
 /**
  * @brief Implement a Spherical camera model
  */
-        class Intrinsic_Equirectangular : public openMVG::cameras::IntrinsicBase
+        class Intrinsic_Spherical_Equirectangular : public openMVG::cameras::IntrinsicBase
         {
 
-            using class_type = Intrinsic_Equirectangular;
+            using class_type = Intrinsic_Spherical_Equirectangular;
 
         public:
 
@@ -24,7 +24,7 @@ namespace mmpos
             * @param w Width of the image plane
             * @param h Height of the image plane
             */
-            Intrinsic_Equirectangular
+            Intrinsic_Spherical_Equirectangular
                     (
                             unsigned int w = 0,
                             unsigned int h = 0
@@ -33,7 +33,7 @@ namespace mmpos
             {
             }
 
-            ~Intrinsic_Equirectangular() override = default;
+            ~Intrinsic_Spherical_Equirectangular() override = default;
 
             /**
             * @brief Tell from which type the embed camera is
@@ -41,7 +41,7 @@ namespace mmpos
             */
             virtual openMVG::cameras::EINTRINSIC getType() const override
             {
-                return openMVG::cameras::CAMERA_SPHERICAL;
+                return openMVG::cameras::CAMERA_SPHERICAL_EQUIRECTANGULAR;
             }
 
             /**
@@ -233,4 +233,4 @@ namespace mmpos
     }
 }
 
-#endif // #ifndef MMPOS_CAMERAS_CAMERA_EQUIRECTANGULAR_HPP
+#endif // #ifndef OPENMVG_CAMERAS_CAMERA_SPHERICAL_EQUIRECTANGULAR_HPP

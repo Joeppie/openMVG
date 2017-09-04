@@ -16,5 +16,6 @@
 #include "openMVG/cameras/Camera_Pinhole_Brown_io.hpp"
 #include "openMVG/cameras/Camera_Pinhole_Fisheye_io.hpp"
 #include "openMVG/cameras/Camera_Spherical_io.hpp"
+#include "openMVG/cameras/Camera_Spherical_Equirectangular_io.hpp"
 
 #endif // OPENMVG_CAMERAS_CAMERAS_IO_HPP
