@@ -26,7 +26,7 @@ inline void openMVG::cameras::Intrinsic_Spherical_Equirectangular::load( Archive
 {
   ar(cereal::base_class<IntrinsicBase>(this));
 }
-CEREAL_REGISTER_TYPE_WITH_NAME(openMVG::cameras::Intrinsic_Spherical_Equirectangular, "spherical");
+CEREAL_REGISTER_TYPE_WITH_NAME(openMVG::cameras::Intrinsic_Spherical_Equirectangular, "spherical_equirectangular");
 
 namespace cereal
 {
