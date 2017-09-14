@@ -24,6 +24,7 @@
 #include "openMVG/sfm/sfm_data_transform.hpp"
 #include "openMVG/sfm/sfm_data.hpp"
 #include "openMVG/types.hpp"
+#include "sfm_data_BA.hpp"
 
 #include <ceres/rotation.h>
 #include <ceres/types.h>
@@ -457,7 +458,7 @@ bool Bundle_Adjustment_Ceres::Adjust
   // Configure a BA engine and run it
   //  Make Ceres automatically detect the bundle structure.
   ceres::Solver::Options ceres_config_options;
-  ceres_config_options.max_num_iterations = 500;
+  ceres_config_options.max_num_iterations = options.max_num_iterations;
   ceres_config_options.preconditioner_type =
     static_cast<ceres::PreconditionerType>(ceres_options_.preconditioner_type_);
   ceres_config_options.linear_solver_type =
