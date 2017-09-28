@@ -9,8 +9,11 @@
 #ifndef OPENMVG_SFM_SFM_DATA_BA_CERES_CAMERA_FUNCTOR_HPP
 #define OPENMVG_SFM_SFM_DATA_BA_CERES_CAMERA_FUNCTOR_HPP
 
+#include <mutex>
+
 #include <ceres/ceres.h>
 #include <ceres/rotation.h>
+#include <iomanip>
 
 #include "openMVG/cameras/Camera_Intrinsics.hpp"
 #include "openMVG/cameras/Camera_Pinhole.hpp"
@@ -796,9 +799,14 @@ struct ResidualErrorFunctor_Intrinsic_Spherical
   const double * m_pos_2dpoint;  // The 2D observation
   size_t         m_imageSize[2]; // The image width and height
 };
-    
-struct ResidualErrorFunctor_Intrinsic_Spherical_Equirectangular
+
+
+
+  struct ResidualErrorFunctor_Intrinsic_Spherical_Equirectangular
 {
+
+
+
     ResidualErrorFunctor_Intrinsic_Spherical_Equirectangular
             (
                     const double* const pos_2dpoint,
@@ -835,7 +843,7 @@ struct ResidualErrorFunctor_Intrinsic_Spherical_Equirectangular
       T pos_proj[3];
       // Rotate the point according the camera rotation
       ceres::AngleAxisRotatePoint(cam_R, pos_3dpoint, pos_proj);
-      
+
       // Apply the camera translation
       pos_proj[0] += cam_t[0];
       pos_proj[1] += cam_t[1];
@@ -867,9 +875,19 @@ struct ResidualErrorFunctor_Intrinsic_Spherical_Equirectangular
       T projected_x = (h + M_PI) / pixelSize;
       T projected_y = v / pixelSize;
 
+      T dx = m_pos_2dpoint[0] - projected_x;
+
+      T imageSizeX = static_cast<T>(m_imageSize[0]);
+      if (ceres::abs(dx) >  imageSizeX / T(2.0) ) //Since this is cylindrical projection, if delta more than half the circle (expressed in pixels), invert result.
+      {
+        T sign = dx/abs(dx); //1 or -1, for respectively positive and negative dx.
+        dx = - (imageSizeX - (dx * sign)) * sign;
+      }
+
       //Determine residual as the signed difference between newly projected point and old result.
-      out_residuals[0] = projected_x - m_pos_2dpoint[0];
-      out_residuals[1] = projected_y - m_pos_2dpoint[1];
+      out_residuals[0] = dx;
+      out_residuals[1] = m_pos_2dpoint[1] - projected_y;
+
 
       return true;
     }

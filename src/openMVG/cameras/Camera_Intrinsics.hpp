@@ -102,9 +102,9 @@ struct IntrinsicBase : public Clonable<IntrinsicBase>
   * @param pose Pose used to project point on camera plane
   * @param X 3d point to project on camera plane
   * @param x image observation
-  * @brief Relative 2d distance between projected and observed points
+  * @return Relative 2d distance between projected and observed points
   */
-  Vec2 residual(
+  virtual Vec2 residual(
     const geometry::Pose3 & pose,
     const Vec3 & X,
     const Vec2 & x ) const
