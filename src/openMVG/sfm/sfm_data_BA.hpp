@@ -62,7 +62,7 @@ struct Optimize_Options
     const Structure_Parameter_Type structure = Structure_Parameter_Type::ADJUST_ALL,
     const Control_Point_Parameter control_point = Control_Point_Parameter(0.0, false), // Default setting does not use GCP in the BA
     const bool use_motion_priors = false,
-    const int max_num_iterations  = 500
+    const unsigned int max_num_iterations  = 500
   )
   :intrinsics_opt(intrinsics),
    extrinsics_opt(extrinsics),
