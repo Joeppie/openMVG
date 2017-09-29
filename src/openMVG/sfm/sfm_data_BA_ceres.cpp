@@ -470,6 +470,7 @@ bool Bundle_Adjustment_Ceres::Adjust
   ceres_config_options.num_threads = ceres_options_.nb_threads_;
   ceres_config_options.num_linear_solver_threads = ceres_options_.nb_threads_;
   ceres_config_options.parameter_tolerance = ceres_options_.parameter_tolerance_;
+  ceres_config_options.function_tolerance = ceres_options_.function_tolerance_;
 
   // Solve BA
   ceres::Solver::Summary summary;

@@ -9,8 +9,6 @@
 #ifndef OPENMVG_SFM_SFM_DATA_BA_CERES_CAMERA_FUNCTOR_HPP
 #define OPENMVG_SFM_SFM_DATA_BA_CERES_CAMERA_FUNCTOR_HPP
 
-#include <mutex>
-
 #include <ceres/ceres.h>
 #include <ceres/rotation.h>
 #include <iomanip>
@@ -880,7 +878,7 @@ struct ResidualErrorFunctor_Intrinsic_Spherical
       T imageSizeX = static_cast<T>(m_imageSize[0]);
       if (ceres::abs(dx) >  imageSizeX / T(2.0) ) //Since this is cylindrical projection, if delta more than half the circle (expressed in pixels), invert result.
       {
-        T sign = dx/abs(dx); //1 or -1, for respectively positive and negative dx.
+        T sign = dx/ceres::abs(dx); //1 or -1, for respectively positive and negative dx.
         dx = - (imageSizeX - (dx * sign)) * sign;
       }
 
