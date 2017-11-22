@@ -26,10 +26,11 @@ enum class Extrinsic_Parameter_Type : int
 };
 
 /// Enum to control if the Structure must be refined or not
-enum class Structure_Parameter_Type : bool
+enum class Structure_Parameter_Type : int
 {
-  NONE = false, // Structure will be held as constant
-  ADJUST_ALL = true
+  NONE, // Structure will be held as constant
+  ADJUST_XY, // Structure will be held as constant
+  ADJUST_ALL
 };
 
 /// Structure to tell to BA if GCP must be use and with which weight

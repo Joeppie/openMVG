@@ -378,6 +378,15 @@ bool Bundle_Adjustment_Ceres::Adjust
         }
       }
     }
+    if(options.structure_opt == Structure_Parameter_Type::ADJUST_XY)
+    {
+      std::vector<int> restrictZVector;
+      restrictZVector.push_back(2); //the index of the z.
+
+      ceres::SubsetParameterization *subset_parameterization =
+          new ceres::SubsetParameterization(3,restrictZVector);
+      problem.SetParameterization(structure_landmark_it.second.X.data(), subset_parameterization);
+    }
     if (options.structure_opt == Structure_Parameter_Type::NONE)
       problem.SetParameterBlockConstant(structure_landmark_it.second.X.data());
   }
