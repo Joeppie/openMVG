@@ -32,7 +32,7 @@ Mat3X Similarity3::operator () ( const Mat3X & point ) const
 
 Pose3 Similarity3::operator () ( const Pose3 & pose ) const
 {
-  return Pose3( pose.rotation() * pose_.rotation().transpose(), this->operator()( pose.center() ) );
+  return Pose3( pose.rotation() * pose_.rotation().transpose(), this->operator()( pose.center() ), pose.locked() );
 }
 
 Similarity3 Similarity3::inverse() const

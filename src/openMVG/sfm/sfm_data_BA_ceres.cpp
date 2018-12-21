@@ -186,10 +186,13 @@ bool Bundle_Adjustment_Ceres::Adjust
   // parameters for cameras and points are added automatically.
   //----------
 
-
+  std::cout << "will not apply similarity.." << std::endl;
   double pose_center_robust_fitting_error = 0.0;
   openMVG::geometry::Similarity3 sim_to_center;
   bool b_usable_prior = false;
+
+
+  std::cout << "options.use_motion_priors_opt ? " << options.use_motion_priors_opt << std::endl;
   if (options.use_motion_priors_opt && sfm_data.GetViews().size() > 3)
   {
     // - Compute a robust X-Y affine transformation & apply it
@@ -238,7 +241,10 @@ bool Bundle_Adjustment_Ceres::Adjust
             pose_centroid += (pose_it.second.center() / (double)sfm_data.poses.size());
           }
           sim_to_center = openMVG::geometry::Similarity3(openMVG::sfm::Pose3(Mat3::Identity(), pose_centroid), 1.0);
-          openMVG::sfm::ApplySimilarity(sim_to_center, sfm_data, true);
+
+          std::cout << "no similarity was applied." << std::endl;
+#warning disabled similarity!
+         // openMVG::sfm::ApplySimilarity(sim_to_center, sfm_data, true);
         }
       }
     }
@@ -259,16 +265,30 @@ bool Bundle_Adjustment_Ceres::Adjust
     const Mat3 R = pose.rotation();
     const Vec3 t = pose.translation();
 
+
     double angleAxis[3];
+    const Vec3 tBACK = t; //temp variable for debug.
+
     ceres::RotationMatrixToAngleAxis((const double*)R.data(), angleAxis);
     // angleAxis + translation
     map_poses[indexPose] = {angleAxis[0], angleAxis[1], angleAxis[2], t(0), t(1), t(2)};
 
+    std::cout << "putting in pose << " << pose_it.second.center() << " as: {" << t(0) << " ; "<< t(1) << " ; "<< t(2) << " }" << std::endl;
+
+//    ceres::AngleAxisToRotationMatrix(&map_poses[indexPose][0], R_refined.data());
+
     double * parameter_block = &map_poses[indexPose][0];
     problem.AddParameterBlock(parameter_block, 6);
+    if(pose_it.second.locked())
+    {
+      problem.SetParameterBlockConstant(parameter_block);
+      std::cout << "Setting extrinsics constant for pose " << pose_it.second.center() << ", constant? " << problem.IsParameterBlockConstant(parameter_block) << std::endl;
+    }
     if (options.extrinsics_opt == Extrinsic_Parameter_Type::NONE)
     {
       // set the whole parameter block as constant for best performance
+
+      std::cout << "parameter clock set to constant for parameter block of pose " << pose_it.second.center() << std::endl;
       problem.SetParameterBlockConstant(parameter_block);
     }
     else  // Subset parametrization
@@ -365,7 +385,7 @@ bool Bundle_Adjustment_Ceres::Adjust
         {
           problem.AddResidualBlock(cost_function,
             p_LossFunction,
-            &map_intrinsics[view->id_intrinsic][0],
+            &(map_intrinsics[view->id_intrinsic][0]),
             &map_poses[view->id_pose][0],
             structure_landmark_it.second.X.data());
         }
@@ -477,7 +497,7 @@ bool Bundle_Adjustment_Ceres::Adjust
   ceres_config_options.minimizer_progress_to_stdout = ceres_options_.bVerbose_;
   ceres_config_options.logging_type = ceres::SILENT;
   ceres_config_options.num_threads = ceres_options_.nb_threads_;
-  ceres_config_options.num_linear_solver_threads = ceres_options_.nb_threads_;
+//  ceres_config_options.num_linear_solver_threads = ceres_options_.nb_threads_;
   ceres_config_options.parameter_tolerance = ceres_options_.parameter_tolerance_;
   ceres_config_options.function_tolerance = ceres_options_.function_tolerance_;
 
@@ -515,7 +535,7 @@ bool Bundle_Adjustment_Ceres::Adjust
     }
 
     // Update camera poses with refined data
-    if (options.extrinsics_opt != Extrinsic_Parameter_Type::NONE)
+   // if (options.extrinsics_opt != Extrinsic_Parameter_Type::NONE)
     {
       for (auto & pose_it : sfm_data.poses)
       {
@@ -524,14 +544,22 @@ bool Bundle_Adjustment_Ceres::Adjust
         Mat3 R_refined;
         ceres::AngleAxisToRotationMatrix(&map_poses[indexPose][0], R_refined.data());
         Vec3 t_refined(map_poses[indexPose][3], map_poses[indexPose][4], map_poses[indexPose][5]);
+
+        std::cout << "getting back pose (prerot) << " << pose_it.second.center() << " from: {" << t_refined(0) << " ; "<< t_refined(1) << " ; "<< t_refined(2) << " }" << std::endl;
+
+
+
         // Update the pose
         Pose3 & pose = pose_it.second;
         pose = Pose3(R_refined, -R_refined.transpose() * t_refined);
+
+
+        std::cout << "Pose afterward reads as: << " << pose_it.second.center() << " from: {" << t_refined(0) << " ; "<< t_refined(1) << " ; "<< t_refined(2) << " }" << std::endl;
       }
     }
 
     // Update camera intrinsics with refined data
-    if (options.intrinsics_opt != Intrinsic_Parameter_Type::NONE)
+  //  if (options.intrinsics_opt != Intrinsic_Parameter_Type::NONE)
     {
       for (auto & intrinsic_it : sfm_data.intrinsics)
       {
@@ -547,7 +575,8 @@ bool Bundle_Adjustment_Ceres::Adjust
     if (b_usable_prior)
     {
       // set back to the original scene centroid
-      openMVG::sfm::ApplySimilarity(sim_to_center.inverse(), sfm_data, true);
+#warning disabled similarity.
+      //openMVG::sfm::ApplySimilarity(sim_to_center.inverse(), sfm_data, true);
 
       //--
       // - Compute some fitting statistics

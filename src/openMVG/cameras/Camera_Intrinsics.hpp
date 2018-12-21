@@ -40,6 +40,9 @@ struct IntrinsicBase : public Clonable<IntrinsicBase>
   /// Height of image
   unsigned int h_;
 
+  /// Returns whether these intrinsics should not be adjusted.
+  bool locked_;
+
   /**
   * @brief Constructor
   * @param w Width of the image
@@ -73,6 +76,31 @@ struct IntrinsicBase : public Clonable<IntrinsicBase>
   unsigned int h() const
   {
     return h_;
+  }
+
+  /**
+  * @brief returns whether these intrinsics are locked
+  * @return true or false
+  */
+  bool locked() const
+  {
+    return locked_;
+  }
+
+  /**
+  * @brief locks the intrinsics
+  */
+  void lock()
+  {
+    locked_ = true;
+  }
+
+  /**
+  * @brief unlocks the intrinsics
+  */
+  void unlock()
+  {
+    locked_ = false;
   }
 
   /**

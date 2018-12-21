@@ -178,10 +178,13 @@ class ParameterBlock {
         << "size of " << new_parameterization->GlobalSize() << ". Did you "
         << "accidentally use the wrong parameter block or parameterization?";
 
+/*
+this check has been temporarily removed by Joep at dec 18 in order to check whether this makes it possible to
+disable the parmater blocks of some extrinsics to exlude these from adjustment.
     CHECK_GT(new_parameterization->LocalSize(), 0)
         << "Invalid parameterization. Parameterizations must have a positive "
         << "dimensional tangent space.";
-
+*/
     local_parameterization_ = new_parameterization;
     local_parameterization_jacobian_.reset(
         new double[local_parameterization_->GlobalSize() *

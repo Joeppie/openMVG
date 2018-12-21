@@ -30,20 +30,26 @@ class Pose3
     /// Center of rotation
     Vec3 center_;
 
-  public:
+    /// Returns whether this pose should not be adjusted.
+    bool locked_;
+
+
+public:
 
     /**
     * @brief Constructor
     * @param r Rotation
     * @param c Center
+    * @param l locked or modifiable by adjustment?
     * @note Default (without args) defines an Identity pose.
     */
     Pose3
     (
-      const Mat3& r = std::move(Mat3::Identity()),
-      const Vec3& c = std::move(Vec3::Zero())
+       Mat3 r =Mat3::Identity(),
+       Vec3 c =Vec3::Zero(),
+       bool l = false
     )
-    : rotation_( r ), center_( c ) {}
+    : rotation_( r ), center_( c ), locked_(l) {}
 
     /**
     * @brief Get Rotation matrix
@@ -81,6 +87,31 @@ class Pose3
       return center_;
     }
 
+  /**
+  * @brief returns whether these intrinsics are locked
+  * @return true or false
+  */
+    bool locked() const
+    {
+      return locked_;
+    }
+
+    /**
+    * @brief locks the intrinsics
+    */
+    void lock()
+    {
+      locked_ = true;
+    }
+
+    /**
+    * @brief unlocks the intrinsics
+    */
+    void unlock()
+    {
+      locked_ = false;
+    }
+
     /**
     * @brief Get translation vector
     * @return translation vector
@@ -110,7 +141,7 @@ class Pose3
     */
     Pose3 operator * ( const Pose3& P ) const
     {
-      return Pose3( rotation_ * P.rotation_, P.center_ + P.rotation_.transpose() * center_ );
+      return Pose3( rotation_ * P.rotation_, P.center_ + P.rotation_.transpose() * center_, locked_ );
     }
 
 
@@ -120,7 +151,7 @@ class Pose3
     */
     Pose3 inverse() const
     {
-      return Pose3( rotation_.transpose(),  -( rotation_ * center_ ) );
+      return Pose3( rotation_.transpose(),  -( rotation_ * center_ ) ,locked_);
     }
 
 

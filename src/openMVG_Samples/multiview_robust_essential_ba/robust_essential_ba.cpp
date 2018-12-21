@@ -228,8 +228,12 @@ int main() {
     }
 
     // Setup poses camera data
-    const Pose3 pose0 = tiny_scene.poses[tiny_scene.views[0]->id_pose] = Pose3(Mat3::Identity(), Vec3::Zero());
-    const Pose3 pose1 = tiny_scene.poses[tiny_scene.views[1]->id_pose] = relativePose_info.relativePose;
+    Pose3 pose0 = tiny_scene.poses[tiny_scene.views[0]->id_pose] = Pose3(Mat3::Identity(), Vec3::Zero());
+    Pose3 pose1 = tiny_scene.poses[tiny_scene.views[1]->id_pose] = relativePose_info.relativePose;
+
+
+    //Can't freaking set a porperty on the copy, need to set the copy on the thing itself.
+    tiny_scene.poses[tiny_scene.views[1]->id_pose].lock();
 
     // Init structure by inlier triangulation
     const Mat34 P1 = tiny_scene.intrinsics[tiny_scene.views[0]->id_intrinsic]->get_projective_equivalent(pose0);
@@ -252,9 +256,12 @@ int main() {
       landmarks[i].X = X;
     }
     Save(tiny_scene, "EssentialGeometry_start.ply", ESfM_Data(ALL));
+    Save(tiny_scene, "EssentialGeometry_start.xml", ESfM_Data(ALL));
 
     //D. Perform Bundle Adjustment of the scene
 
+
+    std::cout << "clion is being stupid, this is a statement to force recompilation" << std::endl;
     Bundle_Adjustment_Ceres bundle_adjustment_obj;
     bundle_adjustment_obj.Adjust(tiny_scene,
       Optimize_Options(
@@ -262,6 +269,7 @@ int main() {
         Extrinsic_Parameter_Type::ADJUST_ALL,
         Structure_Parameter_Type::ADJUST_ALL));
 
+    Save(tiny_scene, "EssentialGeometry_refined.xml", ESfM_Data(ALL));
     Save(tiny_scene, "EssentialGeometry_refined.ply", ESfM_Data(ALL));
   }
   return EXIT_SUCCESS;
