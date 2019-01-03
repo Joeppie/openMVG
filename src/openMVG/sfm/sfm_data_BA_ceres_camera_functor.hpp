@@ -12,6 +12,7 @@
 #include <ceres/ceres.h>
 #include <ceres/rotation.h>
 #include <iomanip>
+#include <memory>
 
 #include "openMVG/cameras/Camera_Intrinsics.hpp"
 #include "openMVG/cameras/Camera_Pinhole.hpp"
@@ -84,7 +85,7 @@ struct WeightedCostFunction
     return false;
   }
 
-  ceres::internal::scoped_ptr<CostFunctor> functor_;
+  std::unique_ptr<CostFunctor> functor_;
   const double weight_;
 };
 
