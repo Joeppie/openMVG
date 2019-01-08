@@ -33,6 +33,9 @@ struct View
   // image size
   IndexT ui_width, ui_height;
 
+  //Added so that a different weight can be applied to one set of observations (from one view) over another.
+  int weight;
+
   // Constructor (use unique index for the view_id)
   View(
     const std::string & sImgPath = "",

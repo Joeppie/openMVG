@@ -20,6 +20,7 @@
 #include "openMVG/cameras/Camera_Pinhole_Fisheye.hpp"
 #include "openMVG/cameras/Camera_Spherical.hpp"
 
+#include <mutex>
 //--
 //- Define ceres Cost_functor for each OpenMVG camera model
 //--
@@ -27,6 +28,8 @@
 namespace openMVG {
 namespace sfm {
 
+
+  std::mutex printMutex;
 
 /// Decorator used to Weight a given cost camera functor
 /// i.e useful to weight GCP (Ground Control Points)
@@ -84,7 +87,7 @@ struct WeightedCostFunction
     return false;
   }
 
-  ceres::internal::scoped_ptr<CostFunctor> functor_;
+  std::unique_ptr<CostFunctor> functor_;
   const double weight_;
 };
 
@@ -138,10 +141,6 @@ struct ResidualErrorFunctor_Pinhole_Intrinsic
     // Rotate the point according the camera rotation
     ceres::AngleAxisRotatePoint(cam_R, pos_3dpoint, pos_proj);
 
-    // Apply the camera translation
-    pos_proj[0] += cam_t[0];
-    pos_proj[1] += cam_t[1];
-    pos_proj[2] += cam_t[2];
 
     // Transform the point from homogeneous to euclidean (undistorted point)
     const T x_u = pos_proj[0] / pos_proj[2];
