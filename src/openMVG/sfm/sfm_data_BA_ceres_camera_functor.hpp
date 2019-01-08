@@ -12,6 +12,7 @@
 #include <ceres/ceres.h>
 #include <ceres/rotation.h>
 #include <iomanip>
+#include <memory>
 
 #include "openMVG/cameras/Camera_Intrinsics.hpp"
 #include "openMVG/cameras/Camera_Pinhole.hpp"
