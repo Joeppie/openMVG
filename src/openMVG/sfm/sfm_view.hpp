@@ -36,6 +36,9 @@ struct View
   //Added so that a different weight can be applied to one set of observations (from one view) over another.
   int weight;
 
+  /// Maximum initial residual backprojection initially accepted by this view; used to discard incorrect
+  double MaxResidual;
+
   // Constructor (use unique index for the view_id)
   View(
     const std::string & sImgPath = "",
