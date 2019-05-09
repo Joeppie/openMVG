@@ -854,6 +854,8 @@ struct ResidualErrorFunctor_Intrinsic_Spherical
       T d = ceres::sqrt(  pos_proj[0]*pos_proj[0] + pos_proj[1]*pos_proj[1] + pos_proj[2]*pos_proj[2]);
 
 
+      std::cout << "spam" << std::endl;
+
       //normalization here occurs like in the openMVG version of the equirectangular camera model.
       T xd = pos_proj[0] / d;
       T yd = pos_proj[1] / d;
