@@ -853,10 +853,13 @@ struct ResidualErrorFunctor_Intrinsic_Spherical
       */
       T d = ceres::sqrt(  pos_proj[0]*pos_proj[0] + pos_proj[1]*pos_proj[1] + pos_proj[2]*pos_proj[2]);
 
-      //Hmm; do we need to perform a normalization of x and y values before passing into atan2??
+
+      //normalization here occurs like in the openMVG version of the equirectangular camera model.
+      T xd = pos_proj[0] / d;
+      T yd = pos_proj[1] / d;
       T zd = pos_proj[2] / d;
 
-      T h = ceres::atan2(pos_proj[0],pos_proj[1]);
+      T h = ceres::atan2(xd,yd);
       T v = ceres::acos(zd);
 
       /*const T coord[] = {lon / (2 * M_PI), lat / (2 * M_PI)}; // normalization
